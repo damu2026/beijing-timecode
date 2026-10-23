@@ -1,0 +1,70 @@
+(() => {
+  const stage = document.querySelector('#stage');
+  const canvas = document.querySelector('#canvas');
+  const image = document.querySelector('#background');
+  const contentImage = document.querySelector('#contentImage');
+  const empty = document.querySelector('#emptyState');
+  const top = document.querySelector('#topTime');
+  const bottom = document.querySelector('#bottomTime');
+  const status = document.querySelector('#status');
+  const controls = document.querySelector('#controls');
+  const root = document.documentElement;
+  const fields = { topX: '--top-x', topY: '--top-y', bottomX: '--bottom-x', bottomY: '--bottom-y' };
+  const defaults = { topX: 18.15, topY: 3.75, bottomX: 34.7, bottomY: 14.8, topSize: 48, bottomSize: 70 };
+  let offset = 0;
+  let calibratedAt = null;
+  let dragging = null;
+
+  const stored = JSON.parse(localStorage.getItem('beijing-timecode-settings') || '{}');
+  const settings = stored.layoutVersion === 5 ? { ...defaults, ...stored } : { ...defaults, layoutVersion: 5 };
+  function applySettings() { Object.entries(fields).forEach(([id, property]) => { const value = settings[id]; root.style.setProperty(property, `${value}%`); document.getElementById(id).value = value; }); const scale = canvas.getBoundingClientRect().width / 1206; root.style.setProperty('--top-size', `${settings.topSize * scale}px`); root.style.setProperty('--bottom-size', `${settings.bottomSize * scale}px`); document.getElementById('topSize').value = settings.topSize; document.getElementById('bottomSize').value = settings.bottomSize; localStorage.setItem('beijing-timecode-settings', JSON.stringify(settings)); }
+  function pad(v) { return String(v).padStart(2, '0'); }
+  function now() { return new Date(Date.now() + offset); }
+  function updateClock() {
+    const d = now();
+    const parts = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' }).formatToParts(d).reduce((a, x) => ({ ...a, [x.type]: x.value }), {});
+    top.textContent = `${parts.hour}:${parts.minute}`;
+    bottom.textContent = `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute}:${parts.second}`;
+  }
+  function setStatus(message) { status.textContent = message; }
+  async function calibrate() {
+    setStatus('正在尝试网络校准…');
+    const sources = [
+      { url: 'https://timeapi.io/api/time/current/zone?timeZone=Asia%2FShanghai', parse: x => x.dateTime },
+      { url: 'https://worldtimeapi.org/api/timezone/Asia/Shanghai', parse: x => x.datetime }
+    ];
+    for (const source of sources) {
+      try {
+        const sent = Date.now();
+        const res = await fetch(source.url, { cache: 'no-store', signal: AbortSignal.timeout(6000) });
+        const received = Date.now();
+        if (!res.ok) continue;
+        const serverMs = Date.parse(source.parse(await res.json()));
+        if (!Number.isFinite(serverMs)) continue;
+        offset = serverMs + (received - sent) / 2 - received;
+        calibratedAt = new Date();
+        setStatus(`已网络校准 · ${calibratedAt.toLocaleTimeString('zh-CN', { hour12: false })}`);
+        return;
+      } catch (_) { /* try the next independent source */ }
+    }
+    offset = 0;
+    setStatus('离线模式 · 使用设备时间（未校准）');
+  }
+  function setImage(src, persist) { image.onload = () => { stage.classList.add('has-image'); empty.hidden = true; }; image.onerror = () => { stage.classList.remove('has-image'); empty.hidden = false; }; image.src = src; if (persist) localStorage.setItem('beijing-timecode-image', src); }
+  function setContentImage(src, persist) { contentImage.onload = () => stage.classList.add('has-content-image'); contentImage.onerror = () => stage.classList.remove('has-content-image'); contentImage.src = src; if (persist) localStorage.setItem('beijing-timecode-content-image', src); }
+  document.querySelector('#imageInput').addEventListener('change', e => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = () => setImage(reader.result, true); reader.readAsDataURL(file); });
+  document.querySelector('#contentImageInput').addEventListener('change', e => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = () => setContentImage(reader.result, true); reader.readAsDataURL(file); });
+  document.querySelector('#clearContentImage').onclick = () => { localStorage.removeItem('beijing-timecode-content-image'); contentImage.removeAttribute('src'); stage.classList.remove('has-content-image'); document.querySelector('#contentImageInput').value = ''; };
+  document.querySelector('#openControls').onclick = () => { controls.hidden = false; };
+  document.querySelector('#closeControls').onclick = () => { controls.hidden = true; };
+  document.querySelector('#fullScreen').onclick = async () => { try { await (document.fullscreenElement ? document.exitFullscreen() : stage.requestFullscreen()); } catch (_) { setStatus('此浏览器不支持全屏'); } };
+  document.querySelector('#calibrate').onclick = calibrate;
+  [...Object.keys(fields), 'topSize', 'bottomSize'].forEach(id => document.querySelector(`#${id}`).addEventListener('input', e => { settings[id] = Number(e.target.value); applySettings(); }));
+  [top, bottom].forEach(el => el.addEventListener('pointerdown', e => { dragging = el.id === 'topTime' ? ['topX', 'topY'] : ['bottomX', 'bottomY']; el.setPointerCapture(e.pointerId); }));
+  stage.addEventListener('pointermove', e => { if (!dragging) return; const rect = canvas.getBoundingClientRect(); settings[dragging[0]] = Math.max(0, Math.min(100, (e.clientX - rect.left) / rect.width * 100)); settings[dragging[1]] = Math.max(0, Math.min(100, (e.clientY - rect.top) / rect.height * 100)); applySettings(); });
+  stage.addEventListener('pointerup', () => { dragging = null; });
+  applySettings(); window.addEventListener('resize', applySettings);
+  setImage(localStorage.getItem('beijing-timecode-image') || 'assets/3374.jpg', false);
+  const savedContentImage = localStorage.getItem('beijing-timecode-content-image'); if (savedContentImage) setContentImage(savedContentImage, false);
+  updateClock(); setInterval(updateClock, 250); calibrate(); setInterval(calibrate, 30 * 60 * 1000);
+})();
