@@ -10,14 +10,40 @@
   const controls = document.querySelector('#controls');
   const root = document.documentElement;
   const fields = { topX: '--top-x', topY: '--top-y', bottomX: '--bottom-x', bottomY: '--bottom-y' };
-  const defaults = { topX: 18.15, topY: 3.75, bottomX: 34.7, bottomY: 14.8, topSize: 48, bottomSize: 70 };
+  // All adjustment values are stored in the original 1206 × 2622 image coordinate system.
+  // This lets the live time move and scale exactly with a "cover" background image.
+  const original = { width: 1206, height: 2622 };
+  const defaults = { topX: 14.35, topY: 2.9, bottomX: 27.03, bottomY: 11.71, topSize: 48, bottomSize: 60 };
   let offset = 0;
   let calibratedAt = null;
   let dragging = null;
 
   const stored = JSON.parse(localStorage.getItem('beijing-timecode-settings') || '{}');
-  const settings = stored.layoutVersion === 5 ? { ...defaults, ...stored } : { ...defaults, layoutVersion: 5 };
-  function applySettings() { Object.entries(fields).forEach(([id, property]) => { const value = settings[id]; root.style.setProperty(property, `${value}%`); document.getElementById(id).value = value; }); const scale = canvas.getBoundingClientRect().width / 1206; root.style.setProperty('--top-size', `${settings.topSize * scale}px`); root.style.setProperty('--bottom-size', `${settings.bottomSize * scale}px`); document.getElementById('topSize').value = settings.topSize; document.getElementById('bottomSize').value = settings.bottomSize; localStorage.setItem('beijing-timecode-settings', JSON.stringify(settings)); }
+  const settings = stored.layoutVersion === 6 ? { ...defaults, ...stored } : { ...defaults, layoutVersion: 6 };
+  function coverMetrics() {
+    const rect = canvas.getBoundingClientRect();
+    const scale = Math.max(rect.width / original.width, rect.height / original.height);
+    return { rect, scale, offsetX: (rect.width - original.width * scale) / 2, offsetY: (rect.height - original.height * scale) / 2 };
+  }
+  function applySettings() {
+    const { scale, offsetX, offsetY } = coverMetrics();
+    Object.entries(fields).forEach(([id, property]) => {
+      const value = settings[id];
+      const isX = id.endsWith('X');
+      const pixel = (isX ? original.width : original.height) * value / 100 * scale + (isX ? offsetX : offsetY);
+      root.style.setProperty(property, `${pixel}px`);
+      document.getElementById(id).value = value;
+    });
+    root.style.setProperty('--top-size', `${settings.topSize * scale}px`);
+    root.style.setProperty('--bottom-size', `${settings.bottomSize * scale}px`);
+    root.style.setProperty('--top-mask-w', `${157 * scale}px`);
+    root.style.setProperty('--top-mask-h', `${63 * scale}px`);
+    root.style.setProperty('--bottom-mask-w', `${712 * scale}px`);
+    root.style.setProperty('--bottom-mask-h', `${71 * scale}px`);
+    document.getElementById('topSize').value = settings.topSize;
+    document.getElementById('bottomSize').value = settings.bottomSize;
+    localStorage.setItem('beijing-timecode-settings', JSON.stringify(settings));
+  }
   function pad(v) { return String(v).padStart(2, '0'); }
   function now() { return new Date(Date.now() + offset); }
   function updateClock() {
@@ -61,7 +87,13 @@
   document.querySelector('#calibrate').onclick = calibrate;
   [...Object.keys(fields), 'topSize', 'bottomSize'].forEach(id => document.querySelector(`#${id}`).addEventListener('input', e => { settings[id] = Number(e.target.value); applySettings(); }));
   [top, bottom].forEach(el => el.addEventListener('pointerdown', e => { dragging = el.id === 'topTime' ? ['topX', 'topY'] : ['bottomX', 'bottomY']; el.setPointerCapture(e.pointerId); }));
-  stage.addEventListener('pointermove', e => { if (!dragging) return; const rect = canvas.getBoundingClientRect(); settings[dragging[0]] = Math.max(0, Math.min(100, (e.clientX - rect.left) / rect.width * 100)); settings[dragging[1]] = Math.max(0, Math.min(100, (e.clientY - rect.top) / rect.height * 100)); applySettings(); });
+  stage.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const { rect, scale, offsetX, offsetY } = coverMetrics();
+    settings[dragging[0]] = Math.max(0, Math.min(100, (e.clientX - rect.left - offsetX) / (original.width * scale) * 100));
+    settings[dragging[1]] = Math.max(0, Math.min(100, (e.clientY - rect.top - offsetY) / (original.height * scale) * 100));
+    applySettings();
+  });
   stage.addEventListener('pointerup', () => { dragging = null; });
   applySettings(); window.addEventListener('resize', applySettings);
   setImage(localStorage.getItem('beijing-timecode-image') || 'assets/3374.jpg', false);
