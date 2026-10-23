@@ -1,4 +1,4 @@
-:root { --top-x: 18.15%; --top-y: 3.75%; --bottom-x: 34.7%; --bottom-y: 14.8%; --top-size: 48px; --bottom-size: 70px; }
+:root { --top-x: 173px; --top-y: 76px; --bottom-x: 326px; --bottom-y: 307px; --top-size: 48px; --bottom-size: 60px; --top-mask-w: 157px; --top-mask-h: 63px; --bottom-mask-w: 712px; --bottom-mask-h: 71px; }
 * { box-sizing: border-box; }
 body { margin: 0; min-height: 100dvh; overflow: hidden; background: #080b0f; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; }
 #stage { position: relative; display: grid; place-items: center; width: 100vw; height: 100dvh; overflow: hidden; touch-action: none; background: #080b0f; }
@@ -15,8 +15,8 @@ body { margin: 0; min-height: 100dvh; overflow: hidden; background: #080b0f; col
 .top-time { left: var(--top-x); top: var(--top-y); font-size: var(--top-size); }
 .bottom-time { left: var(--bottom-x); top: var(--bottom-y); font-size: var(--bottom-size); }
 .mask { position: absolute; z-index: 2; transform: translate(-50%, -50%); pointer-events: none; }
-#topMask { left: var(--top-x); top: var(--top-y); width: 13%; height: 2.4%; background: linear-gradient(90deg, #fbf4e9 0%, #fbedeb 100%); }
-#bottomMask { left: var(--bottom-x); top: var(--bottom-y); width: 59%; height: 2.7%; background: linear-gradient(90deg, #fbf5e9 0%, #f8e7e9 100%); }
+#topMask { left: var(--top-x); top: var(--top-y); width: var(--top-mask-w); height: var(--top-mask-h); background: linear-gradient(90deg, #fbf4e9 0%, #fbedeb 100%); }
+#bottomMask { left: var(--bottom-x); top: var(--bottom-y); width: var(--bottom-mask-w); height: var(--bottom-mask-h); background: linear-gradient(90deg, #fbf5e9 0%, #f8e7e9 100%); }
 .status { position: absolute; z-index: 4; left: 50%; bottom: calc(env(safe-area-inset-bottom) + 10px); transform: translateX(-50%); padding: 5px 9px; border-radius: 999px; max-width: calc(100vw - 28px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; background: rgba(0,0,0,.52); color: rgba(255,255,255,.84); font-size: 11px; }
 .round-button { position: fixed; z-index: 11; right: 16px; top: calc(env(safe-area-inset-top) + 14px); width: 42px; height: 42px; border: 0; border-radius: 50%; color: white; background: rgba(15,19,25,.75); font-size: 20px; backdrop-filter: blur(8px); }
 .controls { position: fixed; z-index: 12; right: 12px; top: calc(env(safe-area-inset-top) + 10px); width: min(340px, calc(100vw - 24px)); padding: 16px; border-radius: 16px; background: rgba(20,25,31,.96); box-shadow: 0 14px 48px rgba(0,0,0,.48); font-size: 14px; }
