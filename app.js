@@ -1,6 +1,7 @@
 (() => {
   const stage = document.querySelector('#stage');
   const canvas = document.querySelector('#canvas');
+  const artboard = document.querySelector('#artboard');
   const image = document.querySelector('#background');
   const contentImage = document.querySelector('#contentImage');
   const empty = document.querySelector('#emptyState');
@@ -19,7 +20,7 @@
   let dragging = null;
 
   const stored = JSON.parse(localStorage.getItem('beijing-timecode-settings') || '{}');
-  const settings = stored.layoutVersion === 6 ? { ...defaults, ...stored } : { ...defaults, layoutVersion: 6 };
+  const settings = stored.layoutVersion === 7 ? { ...defaults, ...stored } : { ...defaults, layoutVersion: 7 };
   function coverMetrics() {
     const rect = canvas.getBoundingClientRect();
     const scale = Math.max(rect.width / original.width, rect.height / original.height);
@@ -30,17 +31,12 @@
     const { scale, offsetX, offsetY } = coverMetrics();
     Object.entries(fields).forEach(([id, property]) => {
       const value = settings[id];
-      const isX = id.endsWith('X');
-      const pixel = (isX ? original.width : original.height) * value / 100 * scale + (isX ? offsetX : offsetY);
-      root.style.setProperty(property, `${pixel}px`);
+      root.style.setProperty(property, `${value}%`);
       document.getElementById(id).value = value;
     });
-    root.style.setProperty('--top-size', `${settings.topSize * scale}px`);
-    root.style.setProperty('--bottom-size', `${settings.bottomSize * scale}px`);
-    root.style.setProperty('--top-mask-w', `${157 * scale}px`);
-    root.style.setProperty('--top-mask-h', `${63 * scale}px`);
-    root.style.setProperty('--bottom-mask-w', `${712 * scale}px`);
-    root.style.setProperty('--bottom-mask-h', `${71 * scale}px`);
+    artboard.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+    root.style.setProperty('--top-size', `${settings.topSize}px`);
+    root.style.setProperty('--bottom-size', `${settings.bottomSize}px`);
     document.getElementById('topSize').value = settings.topSize;
     document.getElementById('bottomSize').value = settings.bottomSize;
     localStorage.setItem('beijing-timecode-settings', JSON.stringify(settings));
