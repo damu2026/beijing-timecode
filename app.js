@@ -50,7 +50,7 @@
     offset = 0;
     setStatus('离线模式 · 使用设备时间（未校准）');
   }
-  function setImage(src, persist) { image.onload = () => { stage.classList.add('has-image'); empty.hidden = true; }; image.onerror = () => { stage.classList.remove('has-image'); empty.hidden = false; }; image.src = src; if (persist) localStorage.setItem('beijing-timecode-image', src); }
+  function setImage(src, persist) { image.onload = () => { stage.classList.add('has-image'); empty.hidden = true; }; image.onerror = () => { if (src === 'assets/3374.jpg') { image.onerror = () => { stage.classList.remove('has-image'); empty.hidden = false; }; image.src = '3374.jpg'; return; } stage.classList.remove('has-image'); empty.hidden = false; }; image.src = src; if (persist) localStorage.setItem('beijing-timecode-image', src); }
   function setContentImage(src, persist) { contentImage.onload = () => stage.classList.add('has-content-image'); contentImage.onerror = () => stage.classList.remove('has-content-image'); contentImage.src = src; if (persist) localStorage.setItem('beijing-timecode-content-image', src); }
   document.querySelector('#imageInput').addEventListener('change', e => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = () => setImage(reader.result, true); reader.readAsDataURL(file); });
   document.querySelector('#contentImageInput').addEventListener('change', e => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = () => setContentImage(reader.result, true); reader.readAsDataURL(file); });
