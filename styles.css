@@ -11,7 +11,7 @@ body { margin: 0; min-height: 100dvh; overflow: hidden; background: #080b0f; col
 .empty-state { position: absolute; inset: 0; display: grid; place-content: center; gap: 9px; text-align: center; color: #c8d0dc; letter-spacing: .04em; background: radial-gradient(circle at 50% 35%, #1e2a37, #080b0f 63%); }
 .empty-state small { color: #8793a2; }
 #stage.has-image .empty-state { display: none; }
-.time { position: absolute; z-index: 3; transform: translate(-50%, -50%); margin: 0; white-space: nowrap; font-family: Arial, Helvetica, sans-serif; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.025em; color: #24272c; cursor: grab; -webkit-user-select: none; user-select: none; }
+.time { position: absolute; z-index: 3; transform: translate(-50%, -50%); margin: 0; white-space: nowrap; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.025em; line-height: 1; color: #24272c; cursor: grab; -webkit-user-select: none; user-select: none; }
 .time:active { cursor: grabbing; }
 .top-time { left: var(--top-x); top: var(--top-y); font-size: var(--top-size); }
 .bottom-time { left: var(--bottom-x); top: var(--bottom-y); font-size: var(--bottom-size); }
