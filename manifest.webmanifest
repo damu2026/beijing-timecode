@@ -1,0 +1,9 @@
+{
+  "name": "北京时间时间码",
+  "short_name": "时间码",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#080b0f",
+  "theme_color": "#080b0f",
+  "orientation": "portrait"
+}
