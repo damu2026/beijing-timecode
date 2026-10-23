@@ -9,3 +9,5 @@
 ## GitHub Pages
 
 推送到仓库的 `main` 分支后，`.github/workflows/deploy-pages.yml` 会自动部署。首次使用时，在仓库 **Settings → Pages → Build and deployment** 选择 **GitHub Actions**。
+
+GitHub Pages 已启用，访问地址将在部署完成后显示。
