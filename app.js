@@ -20,7 +20,7 @@
   let dragging = null;
 
   const stored = JSON.parse(localStorage.getItem('beijing-timecode-settings') || '{}');
-  const settings = stored.layoutVersion === 7 ? { ...defaults, ...stored } : { ...defaults, layoutVersion: 7 };
+  const settings = stored.layoutVersion === 8 ? { ...defaults, ...stored } : { ...defaults, layoutVersion: 8 };
   function coverMetrics() {
     const rect = canvas.getBoundingClientRect();
     const scale = Math.max(rect.width / original.width, rect.height / original.height);
@@ -80,7 +80,13 @@
   document.querySelector('#clearContentImage').onclick = () => { localStorage.removeItem('beijing-timecode-content-image'); contentImage.removeAttribute('src'); stage.classList.remove('has-content-image'); document.querySelector('#contentImageInput').value = ''; };
   document.querySelector('#openControls').onclick = () => { controls.hidden = false; };
   document.querySelector('#closeControls').onclick = () => { controls.hidden = true; };
-  document.querySelector('#fullScreen').onclick = async () => { try { await (document.fullscreenElement ? document.exitFullscreen() : stage.requestFullscreen()); } catch (_) { setStatus('此浏览器不支持全屏'); } };
+  document.querySelector('#fullScreen').onclick = async () => {
+    try { await (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen()); }
+    catch (_) {
+      const isApple = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      setStatus(isApple ? 'iPhone：Safari 点“分享”→“添加到主屏幕”，即可全屏打开' : '此浏览器不支持网页全屏');
+    }
+  };
   document.querySelector('#calibrate').onclick = calibrate;
   [...Object.keys(fields), 'topSize', 'bottomSize'].forEach(id => document.querySelector(`#${id}`).addEventListener('input', e => { settings[id] = Number(e.target.value); applySettings(); }));
   [top, bottom].forEach(el => el.addEventListener('pointerdown', e => { dragging = el.id === 'topTime' ? ['topX', 'topY'] : ['bottomX', 'bottomY']; el.setPointerCapture(e.pointerId); }));
