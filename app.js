@@ -23,7 +23,8 @@
   function coverMetrics() {
     const rect = canvas.getBoundingClientRect();
     const scale = Math.max(rect.width / original.width, rect.height / original.height);
-    return { rect, scale, offsetX: (rect.width - original.width * scale) / 2, offsetY: (rect.height - original.height * scale) / 2 };
+    // The background is horizontally centered but anchored to the top edge.
+    return { rect, scale, offsetX: (rect.width - original.width * scale) / 2, offsetY: 0 };
   }
   function applySettings() {
     const { scale, offsetX, offsetY } = coverMetrics();
