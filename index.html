@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#080b0f" />
+    <title>北京时间时间码</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main id="stage" aria-label="北京时间截图时间码">
+      <div id="canvas">
+        <img id="background" alt="原始截图底图" />
+        <img id="contentImage" alt="下方内容图片" />
+        <div id="emptyState" class="empty-state">
+          <span>未找到默认底图</span>
+          <small>点右下角按钮上传图片</small>
+        </div>
+        <div id="topMask" class="mask" aria-hidden="true"></div>
+        <output id="topTime" class="time top-time" aria-label="北京时间小时分钟"></output>
+        <div id="bottomMask" class="mask" aria-hidden="true"></div>
+        <output id="bottomTime" class="time bottom-time" aria-label="北京时间日期和时间"></output>
+      </div>
+      <div id="status" class="status" role="status">正在尝试网络校准…</div>
+    </main>
+
+    <button id="openControls" class="round-button" aria-label="打开设置">⚙</button>
+    <section id="controls" class="controls" aria-label="时间码设置" hidden>
+      <header><strong>时间码设置</strong><button id="closeControls" aria-label="关闭设置">×</button></header>
+      <label class="upload-label">替换底图<input id="imageInput" type="file" accept="image/*" /></label>
+      <label class="upload-label">替换下方白色区域<input id="contentImageInput" type="file" accept="image/*" /></label>
+      <button id="clearContentImage" type="button">清除下方图片</button>
+      <button id="fullScreen">全屏显示</button>
+      <button id="calibrate">重新校准时间</button>
+      <div class="adjustments">
+        <p>位置微调（百分比）</p>
+        <label>左上 X <input id="topX" type="range" min="0" max="100" step="0.05" /></label>
+        <label>左上 Y <input id="topY" type="range" min="0" max="100" step="0.05" /></label>
+        <label>下方 X <input id="bottomX" type="range" min="0" max="100" step="0.05" /></label>
+        <label>下方 Y <input id="bottomY" type="range" min="0" max="100" step="0.05" /></label>
+        <label>顶部字号 <input id="topSize" type="range" min="20" max="70" step="1" /></label>
+        <label>日期字号 <input id="bottomSize" type="range" min="20" max="80" step="1" /></label>
+      </div>
+      <p class="hint">下方图片会从原图横线以下开始铺满；拖动两个时间也可微调。设置仅保存在此设备。</p>
+    </section>
+    <script src="app.js"></script>
+  </body>
+</html>
