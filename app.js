@@ -23,7 +23,7 @@
 
   const stored = JSON.parse(localStorage.getItem('beijing-timecode-settings') || '{}');
   // Reset older manual coordinates once so existing phones pick up the calibrated overlay.
-  const settings = stored.layoutVersion === 10 ? { ...defaults, ...stored } : { ...defaults, layoutVersion: 10 };
+  const settings = stored.layoutVersion === 11 ? { ...defaults, ...stored } : { ...defaults, layoutVersion: 11 };
   function coverMetrics() {
     const rect = canvas.getBoundingClientRect();
     const scale = Math.max(rect.width / original.width, rect.height / original.height);
