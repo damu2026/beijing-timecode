@@ -34,20 +34,21 @@
     <section id="controls" class="controls" aria-label="时间码设置" hidden>
       <header><strong>时间码设置</strong><button id="closeControls" aria-label="关闭设置">×</button></header>
       <label class="upload-label">替换底图<input id="imageInput" type="file" accept="image/*" /></label>
-      <label class="upload-label">替换下方白色区域<input id="contentImageInput" type="file" accept="image/*" /></label>
-      <button id="clearContentImage" type="button">清除下方图片</button>
+      <label class="upload-label">替换整张照片<input id="contentImageInput" type="file" accept="image/*" /></label>
+      <button id="clearContentImage" type="button">清除替换照片</button>
       <button id="fullScreen">全屏显示</button>
       <button id="calibrate">重新校准时间</button>
       <div class="adjustments">
-        <p>位置微调（百分比）</p>
-        <label>左上 X <input id="topX" type="range" min="0" max="100" step="0.05" /></label>
-        <label>左上 Y <input id="topY" type="range" min="0" max="100" step="0.05" /></label>
-        <label>下方 X <input id="bottomX" type="range" min="0" max="100" step="0.05" /></label>
-        <label>下方 Y <input id="bottomY" type="range" min="0" max="100" step="0.05" /></label>
-        <label>顶部字号 <input id="topSize" type="range" min="20" max="70" step="1" /></label>
-        <label>日期字号 <input id="bottomSize" type="range" min="20" max="80" step="1" /></label>
+        <p>拖动滑块，或直接拖动画面上的时间码；会自动保存。</p>
+        <label><span>左上 横向</span><input id="topX" type="range" min="0" max="100" step="0.05" /><output id="topXValue"></output></label>
+        <label><span>左上 纵向</span><input id="topY" type="range" min="0" max="100" step="0.05" /><output id="topYValue"></output></label>
+        <label><span>日期 横向</span><input id="bottomX" type="range" min="0" max="100" step="0.05" /><output id="bottomXValue"></output></label>
+        <label><span>日期 纵向</span><input id="bottomY" type="range" min="0" max="100" step="0.05" /><output id="bottomYValue"></output></label>
+        <label><span>左上 字号</span><input id="topSize" type="range" min="20" max="70" step="1" /><output id="topSizeValue"></output></label>
+        <label><span>日期 字号</span><input id="bottomSize" type="range" min="20" max="80" step="1" /><output id="bottomSizeValue"></output></label>
       </div>
-      <p class="hint">下方图片会从原图横线以下开始铺满；拖动两个时间也可微调。设置仅保存在此设备。</p>
+      <button id="resetLayout" type="button">恢复默认位置和大小</button>
+      <p class="hint">替换照片会从手机画布最顶部铺满。设置只保存在这台设备上。</p>
     </section>
     <script src="app.js"></script>
   </body>
