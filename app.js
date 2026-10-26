@@ -15,7 +15,7 @@
   // This lets the live time move and scale exactly with a "cover" background image.
   const original = { width: 1206, height: 2622 };
   const defaults = { topX: 14.35, topY: 2.9, bottomX: 27.03, bottomY: 11.71, topSize: 48, bottomSize: 60 };
-  const defaultImage = 'assets/3382.jpg';
+  const defaultImage = '3382.jpg';
   let offset = 0;
   let calibratedAt = null;
   let dragging = null;
@@ -74,7 +74,7 @@
     offset = 0;
     setStatus('离线模式 · 使用设备时间（未校准）');
   }
-  function setImage(src, persist) { image.onload = () => { stage.classList.add('has-image'); empty.hidden = true; }; image.onerror = () => { if (src === defaultImage) { image.onerror = () => { stage.classList.remove('has-image'); empty.hidden = false; }; image.src = '3382.jpg'; return; } stage.classList.remove('has-image'); empty.hidden = false; }; image.src = src; if (persist) localStorage.setItem('beijing-timecode-image-v2', src); }
+  function setImage(src, persist) { image.onload = () => { stage.classList.add('has-image'); empty.hidden = true; }; image.onerror = () => { stage.classList.remove('has-image'); empty.hidden = false; }; image.src = src; if (persist) localStorage.setItem('beijing-timecode-image-v2', src); }
   function setContentImage(src, persist) { contentImage.onload = () => stage.classList.add('has-content-image'); contentImage.onerror = () => stage.classList.remove('has-content-image'); contentImage.src = src; if (persist) localStorage.setItem('beijing-timecode-content-image-v2', src); }
   document.querySelector('#imageInput').addEventListener('change', e => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = () => setImage(reader.result, true); reader.readAsDataURL(file); });
   document.querySelector('#contentImageInput').addEventListener('change', e => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = () => setContentImage(reader.result, true); reader.readAsDataURL(file); });
