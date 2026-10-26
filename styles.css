@@ -1,4 +1,4 @@
-:root { --top-x: 14.35%; --top-y: 2.9%; --bottom-x: 27.03%; --bottom-y: 11.71%; --top-size: 48px; --bottom-size: 60px; }
+:root { --top-x: 14.35%; --top-y: 2.6%; --bottom-x: 34.2%; --bottom-y: 11.71%; --top-size: 48px; --bottom-size: 60px; }
 * { box-sizing: border-box; }
 body { margin: 0; min-height: 100dvh; overflow: hidden; background: #080b0f; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; }
 #stage { position: relative; display: grid; place-items: center; width: 100vw; height: 100dvh; overflow: hidden; touch-action: none; background: #080b0f; }
