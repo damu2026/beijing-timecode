@@ -14,14 +14,16 @@
   // All adjustment values are stored in the original 1206 × 2622 image coordinate system.
   // This lets the live time move and scale exactly with a "cover" background image.
   const original = { width: 1206, height: 2622 };
-  const defaults = { topX: 14.35, topY: 2.9, bottomX: 27.03, bottomY: 11.71, topSize: 48, bottomSize: 60 };
+  // Measured from the supplied 1206 × 2622 original: every value is the text centre.
+  const defaults = { topX: 14.35, topY: 2.6, bottomX: 34.2, bottomY: 11.71, topSize: 48, bottomSize: 60 };
   const defaultImage = '3382.jpg';
   let offset = 0;
   let calibratedAt = null;
   let dragging = null;
 
   const stored = JSON.parse(localStorage.getItem('beijing-timecode-settings') || '{}');
-  const settings = stored.layoutVersion === 9 ? { ...defaults, ...stored } : { ...defaults, layoutVersion: 9 };
+  // Reset older manual coordinates once so existing phones pick up the calibrated overlay.
+  const settings = stored.layoutVersion === 10 ? { ...defaults, ...stored } : { ...defaults, layoutVersion: 10 };
   function coverMetrics() {
     const rect = canvas.getBoundingClientRect();
     const scale = Math.max(rect.width / original.width, rect.height / original.height);
