@@ -36,12 +36,15 @@
       const value = settings[id];
       root.style.setProperty(property, `${value}%`);
       document.getElementById(id).value = value;
+      document.getElementById(`${id}Value`).value = `${value.toFixed(2)}%`;
     });
     artboard.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
     root.style.setProperty('--top-size', `${settings.topSize}px`);
     root.style.setProperty('--bottom-size', `${settings.bottomSize}px`);
     document.getElementById('topSize').value = settings.topSize;
     document.getElementById('bottomSize').value = settings.bottomSize;
+    document.getElementById('topSizeValue').value = `${settings.topSize}px`;
+    document.getElementById('bottomSizeValue').value = `${settings.bottomSize}px`;
     localStorage.setItem('beijing-timecode-settings', JSON.stringify(settings));
   }
   function pad(v) { return String(v).padStart(2, '0'); }
@@ -91,6 +94,7 @@
     }
   };
   document.querySelector('#calibrate').onclick = calibrate;
+  document.querySelector('#resetLayout').onclick = () => { Object.assign(settings, defaults, { layoutVersion: 11 }); applySettings(); };
   [...Object.keys(fields), 'topSize', 'bottomSize'].forEach(id => document.querySelector(`#${id}`).addEventListener('input', e => { settings[id] = Number(e.target.value); applySettings(); }));
   [top, bottom].forEach(el => el.addEventListener('pointerdown', e => { dragging = el.id === 'topTime' ? ['topX', 'topY'] : ['bottomX', 'bottomY']; el.setPointerCapture(e.pointerId); }));
   stage.addEventListener('pointermove', e => {
