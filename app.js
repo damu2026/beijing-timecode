@@ -15,12 +15,13 @@
   // This lets the live time move and scale exactly with a "cover" background image.
   const original = { width: 1206, height: 2622 };
   const defaults = { topX: 14.35, topY: 2.9, bottomX: 27.03, bottomY: 11.71, topSize: 48, bottomSize: 60 };
+  const defaultImage = 'assets/3382.jpg';
   let offset = 0;
   let calibratedAt = null;
   let dragging = null;
 
   const stored = JSON.parse(localStorage.getItem('beijing-timecode-settings') || '{}');
-  const settings = stored.layoutVersion === 8 ? { ...defaults, ...stored } : { ...defaults, layoutVersion: 8 };
+  const settings = stored.layoutVersion === 9 ? { ...defaults, ...stored } : { ...defaults, layoutVersion: 9 };
   function coverMetrics() {
     const rect = canvas.getBoundingClientRect();
     const scale = Math.max(rect.width / original.width, rect.height / original.height);
@@ -73,11 +74,11 @@
     offset = 0;
     setStatus('离线模式 · 使用设备时间（未校准）');
   }
-  function setImage(src, persist) { image.onload = () => { stage.classList.add('has-image'); empty.hidden = true; }; image.onerror = () => { if (src === 'assets/3374.jpg') { image.onerror = () => { stage.classList.remove('has-image'); empty.hidden = false; }; image.src = '3374.jpg'; return; } stage.classList.remove('has-image'); empty.hidden = false; }; image.src = src; if (persist) localStorage.setItem('beijing-timecode-image', src); }
-  function setContentImage(src, persist) { contentImage.onload = () => stage.classList.add('has-content-image'); contentImage.onerror = () => stage.classList.remove('has-content-image'); contentImage.src = src; if (persist) localStorage.setItem('beijing-timecode-content-image', src); }
+  function setImage(src, persist) { image.onload = () => { stage.classList.add('has-image'); empty.hidden = true; }; image.onerror = () => { if (src === defaultImage) { image.onerror = () => { stage.classList.remove('has-image'); empty.hidden = false; }; image.src = '3382.jpg'; return; } stage.classList.remove('has-image'); empty.hidden = false; }; image.src = src; if (persist) localStorage.setItem('beijing-timecode-image-v2', src); }
+  function setContentImage(src, persist) { contentImage.onload = () => stage.classList.add('has-content-image'); contentImage.onerror = () => stage.classList.remove('has-content-image'); contentImage.src = src; if (persist) localStorage.setItem('beijing-timecode-content-image-v2', src); }
   document.querySelector('#imageInput').addEventListener('change', e => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = () => setImage(reader.result, true); reader.readAsDataURL(file); });
   document.querySelector('#contentImageInput').addEventListener('change', e => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = () => setContentImage(reader.result, true); reader.readAsDataURL(file); });
-  document.querySelector('#clearContentImage').onclick = () => { localStorage.removeItem('beijing-timecode-content-image'); contentImage.removeAttribute('src'); stage.classList.remove('has-content-image'); document.querySelector('#contentImageInput').value = ''; };
+  document.querySelector('#clearContentImage').onclick = () => { localStorage.removeItem('beijing-timecode-content-image-v2'); contentImage.removeAttribute('src'); stage.classList.remove('has-content-image'); document.querySelector('#contentImageInput').value = ''; };
   document.querySelector('#openControls').onclick = () => { controls.hidden = false; };
   document.querySelector('#closeControls').onclick = () => { controls.hidden = true; };
   document.querySelector('#fullScreen').onclick = async () => {
@@ -99,7 +100,7 @@
   });
   stage.addEventListener('pointerup', () => { dragging = null; });
   applySettings(); window.addEventListener('resize', applySettings);
-  setImage(localStorage.getItem('beijing-timecode-image') || 'assets/3374.jpg', false);
-  const savedContentImage = localStorage.getItem('beijing-timecode-content-image'); if (savedContentImage) setContentImage(savedContentImage, false);
+  setImage(localStorage.getItem('beijing-timecode-image-v2') || defaultImage, false);
+  const savedContentImage = localStorage.getItem('beijing-timecode-content-image-v2'); if (savedContentImage) setContentImage(savedContentImage, false);
   updateClock(); setInterval(updateClock, 250); calibrate(); setInterval(calibrate, 30 * 60 * 1000);
 })();
